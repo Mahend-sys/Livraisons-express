@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Livraison Express - Douala</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+body{background:#fafafa;color:#222}
+header{background:#e65100;color:#fff;padding:14px 20px}
+.hero{background:#ff9800;color:#fff;text-align:center;padding:40px 20px}
+.btn{background:#e65100;color:#fff;border:none;padding:12px 24px;border-radius:25px;font-weight:bold;font-size:16px;width:100%;margin-top:16px}
+section{max-width:900px;margin:24px auto;padding:0 16px}
+h3{color:#e65100;margin-bottom:12px}
+.card{background:#fff;padding:16px;border-radius:12px;box-shadow:0 2px 6px rgba(0,0,0,.1);margin-bottom:10px}
+label{display:block;margin:12px 0 4px;font-weight:bold}
+input,select,textarea{width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;font-size:15px}
+</style>
+</head>
+<body>
+<header><h1>Livraison Express</h1></header>
+<div class="hero"><h2>Livré en moins de 45 minutes à Douala</h2><p>Nourriture, vêtements, colis et courses par moto.</p></div>
+<section>
+<h3>Passer une commande</h3>
+<form id="formCommande" class="card">
+<label>Votre nom</label><input id="nom" required>
+<label>Votre téléphone</label><input id="tel" type="tel" required>
+<label>Type de livraison</label>
+<select id="service"><option>Nourriture</option><option>Vêtements</option><option>Colis express</option><option>Courses</option></select>
+<label>Adresse de ramassage (quartier, point de repère)</label><input id="depart" required>
+<label>Adresse de livraison (quartier, point de repère)</label><input id="arrivee" required>
+<label>Description de la commande</label><textarea id="desc" rows="3" required></textarea>
+<label>Distance approximative (km)</label><input id="km" type="number" min="1" value="3">
+<label>Livraison</label>
+<select id="mode"><option value="normal">Normale</option><option value="express">Express</option></select>
+<label>Mode de paiement</label>
+<select id="paiement">
+<option value="orange">Orange Money : 655 17 12 01</option>
+<option value="mtn">MTN Mobile Money : 672 70 67 67</option>
+<option value="cash">Espèces à la livraison</option>
+</select>
+<p id="prix" style="margin-top:12px;font-weight:bold;color:#e65100"></p>
+<button class="btn" type="submit">Confirmer la commande</button>
+</form>
+</section>
+<section>
+<h3>Suivre ma commande</h3>
+<form id="formSuivi" class="card">
+<label>Numéro de suivi</label><input id="numSuivi" placeholder="LE-12345" required>
+<button class="btn" type="submit">Voir l'état</button>
+</form>
+<div id="resultat"></div>
+</section>
+<p style="text-align:center;padding:20px;color:#666;font-size:13px">Livraison Express, Douala</p>
