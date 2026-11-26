@@ -52,3 +52,59 @@ input,select,textarea{width:100%;padding:10px;border:1px solid #ccc;border-radiu
 <div id="resultat"></div>
 </section>
 <p style="text-align:center;padding:20px;color:#666;font-size:13px">Livraison Express, Douala</p>
+<script>
+var ETAPES=['Commande reçue','Livreur assigné','Commande ramassée','En route','Livrée'];
+function calculerPrix(){
+var km=parseFloat(document.getElementById('km').value)||0;
+var p=1000;
+if(km>3){p+=Math.ceil(km-3)*200;}
+if(document.getElementById('mode').value==='express'){p+=500;}
+return p;
+}
+function afficherPrix(){document.getElementById('prix').textContent='Prix : '+calculerPrix()+' FCFA';}
+document.getElementById('km').addEventListener('input',afficherPrix);
+document.getElementById('mode').addEventListener('input',afficherPrix);
+afficherPrix();
+document.getElementById('formCommande').addEventListener('submit',function(e){
+e.preventDefault();
+var f=e.target;
+var c={nom:nom.value,tel:tel.value,service:service.value,depart:depart.value,arrivee:arrivee.value,desc:desc.value,paiement:paiement.value,prix:calculerPrix()};
+fetch('/api/commandes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(c)})
+.then(function(r){if(!r.ok)throw 0;return r.json();})
+.then(function(rep){
+var n=rep.numero;
+var consigne='';
+if(c.paiement==='orange'){consigne=' Payez '+c.prix+' FCFA par Orange Money au 655 17 12 01 en indiquant '+n+'.';}
+if(c.paiement==='mtn'){consigne=' Payez '+c.prix+' FCFA par MTN Mobile Money au 672 70 67 67 en indiquant '+n+'.';}
+if(c.paiement==='cash'){consigne=' Vous paierez '+c.prix+' FCFA en espèces au livreur.';}
+var msg=encodeURIComponent('Nouvelle commande '+n+'\nClient : '+c.nom+' ('+c.tel+')\nService : '+c.service+'\nRamassage : '+c.depart+'\nLivraison : '+c.arrivee+'\nDescription : '+c.desc+'\nPrix : '+c.prix+' FCFA\nPaiement : '+c.paiement);
+alert('Commande confirmée ! Numéro de suivi : '+n+'.'+consigne);
+window.open('https://wa.me/237655171201?text='+msg,'_blank');
+numSuivi.value=n;
+f.reset();
+afficherPrix();
+})
+.catch(function(){alert('Envoi impossible. Réessayez.');});
+});
+function afficherSuivi(n){
+fetch('/api/commandes/'+encodeURIComponent(n))
+.then(function(r){if(!r.ok)throw 0;return r.json();})
+.then(function(c){
+var h='<div class="card"><b>Commande '+c.numero+'</b><br>'+c.service+' : '+c.depart+' vers '+c.arrivee+'<br>Prix : '+c.prix+' FCFA<br><br>';
+ETAPES.forEach(function(nom,i){
+h+='<div style="color:'+(i<=c.etape?'#2e7d32':'#999')+'">'+(i<=c.etape?'✔ ':'○ ')+nom+'</div>';
+});
+document.getElementById('resultat').innerHTML=h+'</div>';
+})
+.catch(function(){document.getElementById('resultat').innerHTML='<p>Aucune commande trouvée.</p>';});
+}
+document.getElementById('formSuivi').addEventListener('submit',function(e){
+e.preventDefault();
+var n=numSuivi.value.trim().toUpperCase();
+afficherSuivi(n);
+clearInterval(window.minuteur);
+window.minuteur=setInterval(function(){afficherSuivi(n);},15000);
+});
+</script>
+</body>
+</html>
